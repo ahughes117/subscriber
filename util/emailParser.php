@@ -5,6 +5,8 @@
   Provide email address (raw input)
   Returns true if the email address has the email
   address format and the domain exists.
+ * It is the only correct way to check emails.
+ * This is not my code. Source: http://www.linuxjournal.com/article/9585?page=0,3
  */
 function validEmail($email) {
     $isValid = true;
