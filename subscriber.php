@@ -14,6 +14,8 @@ $surname = $_POST['surname'];
 
 if (validEmail($email)) {
     insertEmail($subscribeQ, $email, $name, $surname);
+    sendMail('', $dbName, $emailNotifStart . $email . $emailNotifEnd, 
+            $emailL, 'subscriber');
     echo $sucMessage;
 } else {
     echo $failMessage;

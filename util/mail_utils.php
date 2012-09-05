@@ -77,5 +77,14 @@ function insertEmail($aQuery, $aEmail, $aName, $aSurname){
     }
 }
 
+function sendMail($aName, $aFromAddress, $aMessage, $aToAddress, $aSubject){
+    $headers = 'MIME-Version: 1.0' . "\r\n" . 'Content-type: text/plain; charset=UTF-8' . "\r\n" .
+            'From: ' . $aFromAddress . "\r\n" . 
+            'Reply-To: ' . $aFromAddress . "\r\n" . 
+            'X-Mailer: PHP/' . phpversion();
+    
+    mail($aToAddress, '=?UTF-8?B?'.base64_encode($aSubject).'?=' . $aName, $aMessage, $headers);
+}
+
 
 ?>
