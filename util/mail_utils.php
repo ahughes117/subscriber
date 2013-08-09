@@ -74,7 +74,7 @@ function insertEmail($aQuery, $aEmail, $aName, $aSurname) {
             throw new Exception();
         
         //execute subscribe statement
-        $stmt->bind_param('sss', $aEmail, $aName, $aSurname);
+        $stmt->bind_param('sssss', $aEmail, $aName, $aSurname, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
         $stmt->execute();
         
         if (mysqli_error($mysqli))
