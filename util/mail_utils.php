@@ -19,32 +19,32 @@ function validEmail($email) {
         $localLen = strlen($local);
         $domainLen = strlen($domain);
         if ($localLen < 1 || $localLen > 64) {
-            // local part length exceeded
+        // local part length exceeded
             $isValid = false;
         } else if ($domainLen < 1 || $domainLen > 255) {
-            // domain part length exceeded
+        // domain part length exceeded
             $isValid = false;
         } else if ($local[0] == '.' || $local[$localLen - 1] == '.') {
-            // local part starts or ends with '.'
+        // local part starts or ends with '.'
             $isValid = false;
         } else if (preg_match('/\\.\\./', $local)) {
-            // local part has two consecutive dots
+        // local part has two consecutive dots
             $isValid = false;
         } else if (!preg_match('/^[A-Za-z0-9\\-\\.]+$/', $domain)) {
-            // character not valid in domain part
+        // character not valid in domain part
             $isValid = false;
         } else if (preg_match('/\\.\\./', $domain)) {
-            // domain part has two consecutive dots
+        // domain part has two consecutive dots
             $isValid = false;
         } else if (!preg_match('/^(\\\\.|[A-Za-z0-9!#%&`_=\\/$\'*+?^{}|~.-])+$/', str_replace("\\\\", "", $local))) {
-            // character not valid in local part unless 
-            // local part is quoted
+        // character not valid in local part unless 
+        // local part is quoted
             if (!preg_match('/^"(\\\\"|[^"])+"$/', str_replace("\\\\", "", $local))) {
                 $isValid = false;
             }
         }
         if ($isValid && !(checkdnsrr($domain, "MX") || checkdnsrr($domain, "A"))) {
-            // domain not found in DNS
+        // domain not found in DNS
             $isValid = false;
         }
     }
@@ -62,29 +62,42 @@ function validEmail($email) {
  * @param type $aSurname
  * @return boolean 
  */
-function insertEmail($aQuery, $aEmail, $aName, $aSurname){
+function insertEmail($aQuery, $aEmail, $aName, $aSurname) {
     global $mysqli;
-    //prepare subscribe statement
-    $stmt = $mysqli->prepare($aQuery);
-    //execute subscribe statement
-    $stmt->bind_param('sss', $aEmail, $aName, $aSurname);
-    
-    $stmt->execute();
-    if(mysqli_error($mysqli)){
+
+    try {
+        //prepare subscribe statement
+        $stmt = $mysqli->prepare($aQuery);
+        
+        //checking if query well written
+        if(!$stmt)
+            throw new Exception();
+        
+        //execute subscribe statement
+        $stmt->bind_param('sss', $aEmail, $aName, $aSurname);
+        $stmt->execute();
+        
+        if (mysqli_error($mysqli))
+            throw new Exception();
+        
+        if($stmt->affected_rows != 1)
+            throw new Exception();
+        
+        //housekeeping and returning
+        $stmt->close();
         return true;
-    } else {
+    } catch (Exception $x) {
         return false;
     }
 }
 
-function sendMail($aName, $aFromAddress, $aMessage, $aToAddress, $aSubject){
+function sendMail($aName, $aFromAddress, $aMessage, $aToAddress, $aSubject) {
     $headers = 'MIME-Version: 1.0' . "\r\n" . 'Content-type: text/plain; charset=UTF-8' . "\r\n" .
-            'From: ' . $aFromAddress . "\r\n" . 
-            'Reply-To: ' . $aFromAddress . "\r\n" . 
+            'From: ' . $aFromAddress . "\r\n" .
+            'Reply-To: ' . $aFromAddress . "\r\n" .
             'X-Mailer: PHP/' . phpversion();
-    
-    mail($aToAddress, '=?UTF-8?B?'.base64_encode($aSubject).'?=' . $aName, $aMessage, $headers);
-}
 
+    mail($aToAddress, '=?UTF-8?B?' . base64_encode($aSubject) . '?=' . $aName, $aMessage, $headers);
+}
 
 ?>

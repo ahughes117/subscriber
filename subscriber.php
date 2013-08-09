@@ -4,9 +4,9 @@
  * A small subscriber php script. Parameters are posted from sample form subscriber.html 
  */
 
-include 'util/emailParser.php';
-include 'util/opendb.php';
-include 'config.php';
+require_once 'util/mail_utils.php';
+require_once 'util/opendb.php';
+require_once 'config.php';
 
 $email = $_POST['email'];
 $name = $_POST['name'];

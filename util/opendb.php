@@ -1,5 +1,6 @@
 <?php
-include './config.php';
+
+require_once(dirname(__FILE__) . '/../config.php');
 
 /**
  * Opens a database connection and set the character set to utf-8. 
@@ -11,6 +12,6 @@ if (mysqli_connect_errno()) {
     $dbError = true;
 } else {
     mysqli_set_charset($mysqli, "utf8");
-    $dbError == false;
+    $dbError = false;
 }
 ?>
